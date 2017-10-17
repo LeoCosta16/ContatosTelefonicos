@@ -17,7 +17,7 @@ public class ConnectionFactory {
         Connection conn = null;
         try {
             // db parameters
-            String url = "jdbc:sqlite:D:/Programacao/Java/Projeto1/ContatosTelefonicos-master - Mais novo/ContatosTelefonicos.db";
+            String url = "jdbc:sqlite:D:/Programacao/Java/Projeto1/ContatosTelefonicos-master/ContatosTelefonicos.db";
             // create a connection to the database
             conn = DriverManager.getConnection(url);
             

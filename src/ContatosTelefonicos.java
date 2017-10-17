@@ -258,10 +258,10 @@ public class ContatosTelefonicos extends javax.swing.JFrame {
             }
         });
         textFieldPesquisar.addInputMethodListener(new java.awt.event.InputMethodListener() {
-            public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
-            }
             public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
                 textFieldPesquisarInputMethodTextChanged(evt);
+            }
+            public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
             }
         });
         textFieldPesquisar.addActionListener(new java.awt.event.ActionListener() {

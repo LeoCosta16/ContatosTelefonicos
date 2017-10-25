@@ -1,15 +1,20 @@
 import java.awt.Color;
 import java.awt.MouseInfo;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JList;
 
 
 public class ContatosTelefonicos extends javax.swing.JFrame {
+    
 
     Contato cont[] = new Contato[100];
     ContatoDAO dao = new ContatoDAO();
@@ -29,12 +34,13 @@ public class ContatosTelefonicos extends javax.swing.JFrame {
     public ContatosTelefonicos() {
         
         initComponents();
-        
+        jPanel2.setVisible(false);
+        this.selecionaDados(conn);
         ArrayList listaDeContatos = new ArrayList();
         listaDeContatos = dao.selecionaDados(conn);
-        listPrincipal.setModel(modelContatos);
+        //jList1.setModel(modelContatos);
         i = listaDeContatos.size();
-        
+        /*
         for(int j = 0; j < listaDeContatos.size(); j++)  {
             modelContatos.addElement(listaDeContatos.get(j).toString());
             cont[j].setId(j);
@@ -42,7 +48,7 @@ public class ContatosTelefonicos extends javax.swing.JFrame {
             //cont[j].setNumero(dao.selecionaNumero(conn, j);
             //cont[j].setEmail(dao.selecionaEmail(conn, j)); 
             //cont[j].setGrupo(dao.selecionaGrupo(conn, j));
-        }
+        }*/
             
     }
 
@@ -53,33 +59,19 @@ public class ContatosTelefonicos extends javax.swing.JFrame {
         popupMenuMais = new javax.swing.JPopupMenu();
         menuItemApagar = new javax.swing.JMenuItem();
         menuItemSobre = new javax.swing.JMenuItem();
-        panelPrincipal = new javax.swing.JPanel();
-        panelSuperior = new javax.swing.JPanel();
-        buttonMais = new javax.swing.JButton();
-        buttonGrupos = new javax.swing.JButton();
-        labelContatos = new javax.swing.JLabel();
-        checkBoxApagar = new javax.swing.JCheckBox();
-        textFieldPesquisar = new javax.swing.JTextField();
-        buttonAdd = new javax.swing.JButton();
-        buttonNovoContato = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        listPrincipal = new javax.swing.JList<>(modelContatos);
-        jScrollPane3 = new javax.swing.JScrollPane();
-        listPesquisa = new javax.swing.JList<>(modelPesquisa);
-        panelAddContato = new javax.swing.JPanel();
-        panelAddContatoSuperior = new javax.swing.JPanel();
-        buttonCancelar = new javax.swing.JButton();
-        buttonSalvar = new javax.swing.JButton();
-        textFieldNome = new javax.swing.JTextField();
-        textFieldNumero = new javax.swing.JTextField();
-        jPanel1 = new javax.swing.JPanel();
-        textFieldEmail = new javax.swing.JTextField();
-        comboBoxGrupos = new javax.swing.JComboBox<>();
         panelContato = new javax.swing.JPanel();
         panelSuperior1 = new javax.swing.JPanel();
         labelContatoContato = new javax.swing.JLabel();
         buttonVoltarPrincipal = new javax.swing.JButton();
         buttonEditar = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        jTextFieldNome = new javax.swing.JTextField();
+        jTextFieldTelefone = new javax.swing.JTextField();
+        jTextFieldEmail = new javax.swing.JTextField();
+        jButtonSalvar = new javax.swing.JButton();
         panelDesign1 = new javax.swing.JPanel();
         labelNumero = new javax.swing.JLabel();
         labelNumeroContato = new javax.swing.JLabel();
@@ -89,6 +81,29 @@ public class ContatosTelefonicos extends javax.swing.JFrame {
         labelNumero2 = new javax.swing.JLabel();
         labelGrupoContato = new javax.swing.JLabel();
         jSeparator2 = new javax.swing.JSeparator();
+        panelPrincipal = new javax.swing.JPanel();
+        panelSuperior = new javax.swing.JPanel();
+        buttonMais = new javax.swing.JButton();
+        buttonGrupos = new javax.swing.JButton();
+        labelContatos = new javax.swing.JLabel();
+        checkBoxApagar = new javax.swing.JCheckBox();
+        textFieldPesquisar = new javax.swing.JTextField();
+        buttonNovoContato = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        listPrincipal = new javax.swing.JList<>(modelContatos);
+        jScrollPane3 = new javax.swing.JScrollPane();
+        listPesquisa = new javax.swing.JList<>(modelPesquisa);
+        jScrollPane4 = new javax.swing.JScrollPane();
+        jList1 = new javax.swing.JList<>();
+        panelAddContato = new javax.swing.JPanel();
+        panelAddContatoSuperior = new javax.swing.JPanel();
+        buttonCancelar = new javax.swing.JButton();
+        buttonSalvar = new javax.swing.JButton();
+        textFieldNome = new javax.swing.JTextField();
+        textFieldNumero = new javax.swing.JTextField();
+        jPanel1 = new javax.swing.JPanel();
+        textFieldEmail = new javax.swing.JTextField();
+        comboBoxGrupos = new javax.swing.JComboBox<>();
         panelGrupos = new javax.swing.JPanel();
         panelSuperior2 = new javax.swing.JPanel();
         labelContatos1 = new javax.swing.JLabel();
@@ -158,8 +173,252 @@ public class ContatosTelefonicos extends javax.swing.JFrame {
             }
         });
 
+        panelContato.setBackground(new java.awt.Color(255, 255, 255));
+        panelContato.setPreferredSize(new java.awt.Dimension(255, 385));
+        panelContato.setVisible(false);
+
+        panelSuperior1.setBackground(new java.awt.Color(0, 102, 102));
+
+        labelContatoContato.setBackground(new java.awt.Color(255, 255, 255));
+        labelContatoContato.setFont(new java.awt.Font("Nirmala UI", 1, 18)); // NOI18N
+        labelContatoContato.setForeground(new java.awt.Color(238, 242, 241));
+        labelContatoContato.setText("Contato Teste");
+
+        buttonVoltarPrincipal.setBackground(new java.awt.Color(0, 102, 102));
+        buttonVoltarPrincipal.setIcon(new javax.swing.ImageIcon(getClass().getResource("/LeftArrow.png"))); // NOI18N
+        buttonVoltarPrincipal.setToolTipText("");
+        buttonVoltarPrincipal.setBorder(null);
+        buttonVoltarPrincipal.setContentAreaFilled(false);
+        buttonVoltarPrincipal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonVoltarPrincipalActionPerformed(evt);
+            }
+        });
+
+        buttonEditar.setBackground(new java.awt.Color(0, 102, 102));
+        buttonEditar.setFont(new java.awt.Font("Nirmala UI Semilight", 1, 11)); // NOI18N
+        buttonEditar.setForeground(new java.awt.Color(255, 255, 255));
+        buttonEditar.setText("Editar");
+        buttonEditar.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        buttonEditar.setBorderPainted(false
+        );
+        buttonEditar.setContentAreaFilled(false);
+        buttonEditar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                buttonEditarMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                buttonEditarMouseExited(evt);
+            }
+        });
+        buttonEditar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonEditarActionPerformed(evt);
+            }
+        });
+
+        jPanel2.setBackground(new java.awt.Color(255, 255, 255));
+
+        jLabel8.setText("Nome:");
+
+        jLabel9.setText("Telefone:");
+
+        jLabel10.setText("Email:");
+
+        jButtonSalvar.setText("Salvar");
+        jButtonSalvar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonSalvarActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel8)
+                    .addComponent(jLabel9)
+                    .addComponent(jLabel10)
+                    .addComponent(jTextFieldNome, javax.swing.GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE)
+                    .addComponent(jTextFieldTelefone, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextFieldEmail))
+                .addContainerGap(59, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButtonSalvar)
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel8)
+                .addGap(8, 8, 8)
+                .addComponent(jTextFieldNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel9)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jTextFieldTelefone, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(9, 9, 9)
+                .addComponent(jLabel10)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jTextFieldEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 159, Short.MAX_VALUE)
+                .addComponent(jButtonSalvar)
+                .addContainerGap())
+        );
+
+        javax.swing.GroupLayout panelSuperior1Layout = new javax.swing.GroupLayout(panelSuperior1);
+        panelSuperior1.setLayout(panelSuperior1Layout);
+        panelSuperior1Layout.setHorizontalGroup(
+            panelSuperior1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelSuperior1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panelSuperior1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelSuperior1Layout.createSequentialGroup()
+                        .addComponent(labelContatoContato)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(panelSuperior1Layout.createSequentialGroup()
+                        .addComponent(buttonVoltarPrincipal)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(buttonEditar, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(24, 24, 24))))
+        );
+        panelSuperior1Layout.setVerticalGroup(
+            panelSuperior1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelSuperior1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panelSuperior1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelSuperior1Layout.createSequentialGroup()
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 203, Short.MAX_VALUE))
+                    .addGroup(panelSuperior1Layout.createSequentialGroup()
+                        .addGroup(panelSuperior1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(buttonVoltarPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(buttonEditar))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(labelContatoContato)))
+                .addContainerGap())
+        );
+
+        panelDesign1.setBackground(new java.awt.Color(234, 234, 234));
+
+        labelNumero.setFont(new java.awt.Font("Nirmala UI Semilight", 0, 10)); // NOI18N
+        labelNumero.setForeground(new java.awt.Color(34, 34, 34));
+        labelNumero.setText("Nº de telefone");
+
+        labelNumeroContato.setFont(new java.awt.Font("Nirmala UI Semilight", 1, 18)); // NOI18N
+        labelNumeroContato.setText("Numero Contato Teste");
+
+        javax.swing.GroupLayout panelDesign1Layout = new javax.swing.GroupLayout(panelDesign1);
+        panelDesign1.setLayout(panelDesign1Layout);
+        panelDesign1Layout.setHorizontalGroup(
+            panelDesign1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelDesign1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panelDesign1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelDesign1Layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(labelNumeroContato, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(labelNumero))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        panelDesign1Layout.setVerticalGroup(
+            panelDesign1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelDesign1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(labelNumero)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(labelNumeroContato)
+                .addContainerGap(19, Short.MAX_VALUE))
+        );
+
+        panelEmailContato.setBackground(new java.awt.Color(234, 234, 234));
+
+        labelNumero1.setFont(new java.awt.Font("Nirmala UI Semilight", 0, 10)); // NOI18N
+        labelNumero1.setForeground(new java.awt.Color(34, 34, 34));
+        labelNumero1.setText("E-mail");
+
+        labelEmailContato.setFont(new java.awt.Font("Nirmala UI Semilight", 1, 12)); // NOI18N
+        labelEmailContato.setText("Email teste");
+
+        labelNumero2.setFont(new java.awt.Font("Nirmala UI Semilight", 0, 10)); // NOI18N
+        labelNumero2.setForeground(new java.awt.Color(34, 34, 34));
+        labelNumero2.setText("Grupo");
+
+        labelGrupoContato.setFont(new java.awt.Font("Nirmala UI Semilight", 1, 12)); // NOI18N
+        labelGrupoContato.setText("Grupo Teste");
+
+        javax.swing.GroupLayout panelEmailContatoLayout = new javax.swing.GroupLayout(panelEmailContato);
+        panelEmailContato.setLayout(panelEmailContatoLayout);
+        panelEmailContatoLayout.setHorizontalGroup(
+            panelEmailContatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelEmailContatoLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panelEmailContatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelEmailContatoLayout.createSequentialGroup()
+                        .addGroup(panelEmailContatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(labelNumero1)
+                            .addComponent(labelNumero2))
+                        .addGroup(panelEmailContatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(panelEmailContatoLayout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(labelEmailContato, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(35, 35, 35))
+                            .addGroup(panelEmailContatoLayout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(labelGrupoContato, javax.swing.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE)
+                                .addContainerGap())))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelEmailContatoLayout.createSequentialGroup()
+                        .addComponent(jSeparator2)
+                        .addContainerGap())))
+        );
+        panelEmailContatoLayout.setVerticalGroup(
+            panelEmailContatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelEmailContatoLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(panelEmailContatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(labelEmailContato)
+                    .addComponent(labelNumero1))
+                .addGap(2, 2, 2)
+                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panelEmailContatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(labelNumero2)
+                    .addComponent(labelGrupoContato))
+                .addGap(36, 36, 36))
+        );
+
+        javax.swing.GroupLayout panelContatoLayout = new javax.swing.GroupLayout(panelContato);
+        panelContato.setLayout(panelContatoLayout);
+        panelContatoLayout.setHorizontalGroup(
+            panelContatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(panelSuperior1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(panelContatoLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panelContatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(panelDesign1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(panelEmailContato, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        panelContatoLayout.setVerticalGroup(
+            panelContatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelContatoLayout.createSequentialGroup()
+                .addComponent(panelSuperior1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(panelDesign1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(panelEmailContato, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         panelPrincipal.setBackground(new java.awt.Color(255, 255, 255));
-        panelPrincipal.setPreferredSize(new java.awt.Dimension(255, 385));
+        panelPrincipal.setPreferredSize(new java.awt.Dimension(300, 385));
 
         panelSuperior.setBackground(new java.awt.Color(0, 204, 153));
 
@@ -275,12 +534,6 @@ public class ContatosTelefonicos extends javax.swing.JFrame {
             }
         });
 
-        buttonAdd.setBackground(new java.awt.Color(255, 255, 255));
-        buttonAdd.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
-        buttonAdd.setForeground(new java.awt.Color(255, 255, 255));
-        buttonAdd.setBorder(null);
-        buttonAdd.setContentAreaFilled(false);
-
         buttonNovoContato.setIcon(new javax.swing.ImageIcon(getClass().getResource("/add.jpg"))); // NOI18N
         buttonNovoContato.setContentAreaFilled(false);
         buttonNovoContato.addActionListener(new java.awt.event.ActionListener() {
@@ -325,41 +578,48 @@ public class ContatosTelefonicos extends javax.swing.JFrame {
         });
         jScrollPane3.setViewportView(listPesquisa);
 
+        jList1.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
+        jScrollPane4.setViewportView(jList1);
+
         javax.swing.GroupLayout panelPrincipalLayout = new javax.swing.GroupLayout(panelPrincipal);
         panelPrincipal.setLayout(panelPrincipalLayout);
         panelPrincipalLayout.setHorizontalGroup(
             panelPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panelSuperior, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(panelPrincipalLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(panelPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelPrincipalLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(buttonAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(125, 125, 125))
-                    .addGroup(panelPrincipalLayout.createSequentialGroup()
-                        .addGroup(panelPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(textFieldPesquisar, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE)
-                            .addComponent(buttonNovoContato, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addGroup(panelPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(textFieldPesquisar)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelPrincipalLayout.createSequentialGroup()
+                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 1, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(buttonNovoContato, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+            .addComponent(panelSuperior, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         panelPrincipalLayout.setVerticalGroup(
             panelPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelPrincipalLayout.createSequentialGroup()
+                .addContainerGap()
                 .addComponent(panelSuperior, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(textFieldPesquisar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(panelPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(panelPrincipalLayout.createSequentialGroup()
+                        .addComponent(textFieldPesquisar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 216, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(buttonNovoContato))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(buttonNovoContato)
-                .addGap(60, 60, 60)
-                .addComponent(buttonAdd)
-                .addContainerGap())
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(19, Short.MAX_VALUE))
         );
 
         panelAddContato.setBackground(new java.awt.Color(255, 255, 255));
@@ -516,188 +776,6 @@ public class ContatosTelefonicos extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(comboBoxGrupos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(204, Short.MAX_VALUE))
-        );
-
-        panelContato.setBackground(new java.awt.Color(255, 255, 255));
-        panelContato.setPreferredSize(new java.awt.Dimension(255, 385));
-        panelContato.setVisible(false);
-
-        panelSuperior1.setBackground(new java.awt.Color(0, 102, 102));
-
-        labelContatoContato.setBackground(new java.awt.Color(255, 255, 255));
-        labelContatoContato.setFont(new java.awt.Font("Nirmala UI", 1, 18)); // NOI18N
-        labelContatoContato.setForeground(new java.awt.Color(238, 242, 241));
-        labelContatoContato.setText("Contato Teste");
-
-        buttonVoltarPrincipal.setBackground(new java.awt.Color(0, 102, 102));
-        buttonVoltarPrincipal.setIcon(new javax.swing.ImageIcon(getClass().getResource("/LeftArrow.png"))); // NOI18N
-        buttonVoltarPrincipal.setToolTipText("");
-        buttonVoltarPrincipal.setBorder(null);
-        buttonVoltarPrincipal.setContentAreaFilled(false);
-        buttonVoltarPrincipal.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonVoltarPrincipalActionPerformed(evt);
-            }
-        });
-
-        buttonEditar.setBackground(new java.awt.Color(0, 102, 102));
-        buttonEditar.setFont(new java.awt.Font("Nirmala UI Semilight", 1, 11)); // NOI18N
-        buttonEditar.setForeground(new java.awt.Color(255, 255, 255));
-        buttonEditar.setText("Editar");
-        buttonEditar.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        buttonEditar.setBorderPainted(false
-        );
-        buttonEditar.setContentAreaFilled(false);
-        buttonEditar.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                buttonEditarMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                buttonEditarMouseExited(evt);
-            }
-        });
-        buttonEditar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonEditarActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout panelSuperior1Layout = new javax.swing.GroupLayout(panelSuperior1);
-        panelSuperior1.setLayout(panelSuperior1Layout);
-        panelSuperior1Layout.setHorizontalGroup(
-            panelSuperior1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelSuperior1Layout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addComponent(labelContatoContato)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(panelSuperior1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(buttonVoltarPrincipal)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(buttonEditar, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(24, 24, 24))
-        );
-        panelSuperior1Layout.setVerticalGroup(
-            panelSuperior1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelSuperior1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(panelSuperior1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(buttonVoltarPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(buttonEditar))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 87, Short.MAX_VALUE)
-                .addComponent(labelContatoContato)
-                .addContainerGap())
-        );
-
-        panelDesign1.setBackground(new java.awt.Color(234, 234, 234));
-
-        labelNumero.setFont(new java.awt.Font("Nirmala UI Semilight", 0, 10)); // NOI18N
-        labelNumero.setForeground(new java.awt.Color(34, 34, 34));
-        labelNumero.setText("Nº de telefone");
-
-        labelNumeroContato.setFont(new java.awt.Font("Nirmala UI Semilight", 1, 18)); // NOI18N
-        labelNumeroContato.setText("Numero Contato Teste");
-
-        javax.swing.GroupLayout panelDesign1Layout = new javax.swing.GroupLayout(panelDesign1);
-        panelDesign1.setLayout(panelDesign1Layout);
-        panelDesign1Layout.setHorizontalGroup(
-            panelDesign1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelDesign1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(panelDesign1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panelDesign1Layout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addComponent(labelNumeroContato, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(labelNumero))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        panelDesign1Layout.setVerticalGroup(
-            panelDesign1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelDesign1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(labelNumero)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(labelNumeroContato)
-                .addContainerGap(19, Short.MAX_VALUE))
-        );
-
-        panelEmailContato.setBackground(new java.awt.Color(234, 234, 234));
-
-        labelNumero1.setFont(new java.awt.Font("Nirmala UI Semilight", 0, 10)); // NOI18N
-        labelNumero1.setForeground(new java.awt.Color(34, 34, 34));
-        labelNumero1.setText("E-mail");
-
-        labelEmailContato.setFont(new java.awt.Font("Nirmala UI Semilight", 1, 12)); // NOI18N
-        labelEmailContato.setText("Email teste");
-
-        labelNumero2.setFont(new java.awt.Font("Nirmala UI Semilight", 0, 10)); // NOI18N
-        labelNumero2.setForeground(new java.awt.Color(34, 34, 34));
-        labelNumero2.setText("Grupo");
-
-        labelGrupoContato.setFont(new java.awt.Font("Nirmala UI Semilight", 1, 12)); // NOI18N
-        labelGrupoContato.setText("Grupo Teste");
-
-        javax.swing.GroupLayout panelEmailContatoLayout = new javax.swing.GroupLayout(panelEmailContato);
-        panelEmailContato.setLayout(panelEmailContatoLayout);
-        panelEmailContatoLayout.setHorizontalGroup(
-            panelEmailContatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelEmailContatoLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(panelEmailContatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panelEmailContatoLayout.createSequentialGroup()
-                        .addGroup(panelEmailContatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(labelNumero1)
-                            .addComponent(labelNumero2))
-                        .addGroup(panelEmailContatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(panelEmailContatoLayout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(labelEmailContato, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(35, 35, 35))
-                            .addGroup(panelEmailContatoLayout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(labelGrupoContato, javax.swing.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE)
-                                .addContainerGap())))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelEmailContatoLayout.createSequentialGroup()
-                        .addComponent(jSeparator2)
-                        .addContainerGap())))
-        );
-        panelEmailContatoLayout.setVerticalGroup(
-            panelEmailContatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelEmailContatoLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(panelEmailContatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(labelEmailContato)
-                    .addComponent(labelNumero1))
-                .addGap(2, 2, 2)
-                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelEmailContatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(labelNumero2)
-                    .addComponent(labelGrupoContato))
-                .addGap(36, 36, 36))
-        );
-
-        javax.swing.GroupLayout panelContatoLayout = new javax.swing.GroupLayout(panelContato);
-        panelContato.setLayout(panelContatoLayout);
-        panelContatoLayout.setHorizontalGroup(
-            panelContatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panelSuperior1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(panelContatoLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(panelContatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(panelDesign1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(panelEmailContato, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        panelContatoLayout.setVerticalGroup(
-            panelContatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelContatoLayout.createSequentialGroup()
-                .addComponent(panelSuperior1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(panelDesign1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(panelEmailContato, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(58, Short.MAX_VALUE))
         );
 
         panelGrupos.setBackground(new java.awt.Color(255, 255, 255));
@@ -1084,51 +1162,51 @@ public class ContatosTelefonicos extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panelPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 260, Short.MAX_VALUE)
+            .addComponent(panelPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 284, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addGap(0, 14, Short.MAX_VALUE)
                     .addComponent(panelAddContato, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 0, Short.MAX_VALUE)))
+                    .addGap(0, 15, Short.MAX_VALUE)))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addGap(0, 14, Short.MAX_VALUE)
                     .addComponent(panelContato, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 0, Short.MAX_VALUE)))
+                    .addGap(0, 15, Short.MAX_VALUE)))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addGap(0, 14, Short.MAX_VALUE)
                     .addComponent(panelGrupos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 0, Short.MAX_VALUE)))
+                    .addGap(0, 15, Short.MAX_VALUE)))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addGap(0, 14, Short.MAX_VALUE)
                     .addComponent(panelAddGrupo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 0, Short.MAX_VALUE)))
+                    .addGap(0, 15, Short.MAX_VALUE)))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addGap(0, 14, Short.MAX_VALUE)
                     .addComponent(panelSobre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 0, Short.MAX_VALUE)))
+                    .addGap(0, 15, Short.MAX_VALUE)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panelPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 416, Short.MAX_VALUE)
+            .addComponent(panelPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 390, Short.MAX_VALUE)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addGap(0, 3, Short.MAX_VALUE)
                     .addComponent(panelAddContato, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 0, Short.MAX_VALUE)))
+                    .addGap(0, 2, Short.MAX_VALUE)))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addGap(0, 3, Short.MAX_VALUE)
                     .addComponent(panelContato, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 0, Short.MAX_VALUE)))
+                    .addGap(0, 2, Short.MAX_VALUE)))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addGap(0, 3, Short.MAX_VALUE)
                     .addComponent(panelGrupos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 0, Short.MAX_VALUE)))
+                    .addGap(0, 2, Short.MAX_VALUE)))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addGap(0, 0, Short.MAX_VALUE)
@@ -1245,7 +1323,7 @@ public class ContatosTelefonicos extends javax.swing.JFrame {
                 i = -1;
             } 
             else {
-                contatoSelecionado = listPrincipal.getSelectedIndex();
+                contatoSelecionado = jList1.getSelectedIndex();
                
                 modelContatos.removeElementAt(contatoSelecionado);
                 i--;
@@ -1369,6 +1447,7 @@ public class ContatosTelefonicos extends javax.swing.JFrame {
         textFieldNome.setForeground(Color.BLACK);
     }//GEN-LAST:event_textFieldNomeMouseClicked
 
+
     private void textFieldNumeroMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_textFieldNumeroMouseClicked
         // TODO add your handling code here:
         textFieldNumero.setText("");
@@ -1379,10 +1458,13 @@ public class ContatosTelefonicos extends javax.swing.JFrame {
         // TODO add your handling code here:
         panelPrincipal.setVisible(true);
         panelContato.setVisible(false);
-        
         modelPesquisa.removeAllElements();
         textFieldPesquisar.setText("Pesquisar");
         textFieldPesquisar.setForeground(new Color(153,153,153));
+        listPrincipal.updateUI();
+        panelPrincipal.updateUI();
+        
+
     }//GEN-LAST:event_buttonVoltarPrincipalActionPerformed
 
     private void buttonEditarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_buttonEditarMouseEntered
@@ -1395,53 +1477,15 @@ public class ContatosTelefonicos extends javax.swing.JFrame {
 
     private void buttonEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonEditarActionPerformed
         // TODO add your handling code here:
-        editOn = true;
-        gerarGrupos();
+        jPanel2.setVisible(true);
+
         
-        textFieldNome.setForeground(Color.BLACK);
-        textFieldNumero.setForeground(Color.BLACK);
-        textFieldEmail.setForeground(Color.BLACK);
         
-        textFieldNome.setText(cont[contatoSelecionado].getNome());
-        textFieldNumero.setText(cont[contatoSelecionado].getNumero());
-        textFieldEmail.setText(cont[contatoSelecionado].getEmail());
-        comboBoxGrupos.setSelectedItem(cont[contatoSelecionado].getGrupo());
-        
-        panelContato.setVisible(false);
-        panelAddContato.setVisible(true);
     }//GEN-LAST:event_buttonEditarActionPerformed
 
     private void textFieldNumeroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textFieldNumeroActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_textFieldNumeroActionPerformed
-
-    private void listPrincipalMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listPrincipalMouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_listPrincipalMouseClicked
-
-    private void listPrincipalFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_listPrincipalFocusGained
-        // TODO add your handling code here:
-    }//GEN-LAST:event_listPrincipalFocusGained
-
-    private void listPrincipalValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_listPrincipalValueChanged
-        // TODO add your handling code here:
-        if(apagarOn) {
-            contatoSelecionado = listPrincipal.getSelectedIndex();
-        }
-        else {
-            panelPrincipal.setVisible(false);
-            panelPrincipalDefault();
-            panelContato.setVisible(true);
-        
-            contatoSelecionado = listPrincipal.getSelectedIndex();
-            
-            labelContatoContato.setText(cont[contatoSelecionado].getNome());
-            labelNumeroContato.setText(cont[contatoSelecionado].getNumero());
-            labelEmailContato.setText(cont[contatoSelecionado].getEmail());
-            labelGrupoContato.setText(cont[contatoSelecionado].getGrupo());
-        }
-        
-    }//GEN-LAST:event_listPrincipalValueChanged
 
     private void buttonVoltarPrincipal1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonVoltarPrincipal1ActionPerformed
         // TODO add your handling code here:
@@ -1614,6 +1658,64 @@ public class ContatosTelefonicos extends javax.swing.JFrame {
         }  
     }//GEN-LAST:event_listPesquisaMouseClicked
 
+    private void listPrincipalValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_listPrincipalValueChanged
+        // TODO add your handling code here:
+        String selecionadocerto = listPrincipal.getSelectedValue().toString();
+        System.out.println(selecionadocerto);
+        
+            panelPrincipal.setVisible(false);
+            panelPrincipalDefault();
+            panelContato.setVisible(true);
+                     
+        String sql = "SELECT *"
+                     + "FROM contato Where nome = '"+selecionadocerto+"' ;";
+        
+        
+        
+        try{
+            
+            Statement comandoSql = conn.createStatement();
+            ResultSet rs  =comandoSql.executeQuery(sql);
+                                 
+                       
+            while(rs.next()){
+                String id = rs.getString("id");
+                String nome = rs.getString("nome");
+                String numero = rs.getString("numero");
+                String email = rs.getString("email"); 
+                String grupo = rs.getString("grupo");
+                
+                labelContatoContato.setText(nome);
+                labelNumeroContato.setText(numero);
+                labelEmailContato.setText(email);
+                labelGrupoContato.setText(grupo);
+                }
+            
+            
+            
+            
+        }catch(SQLException e){
+            System.out.println(e);
+        }
+        
+    
+        
+            
+            
+    }//GEN-LAST:event_listPrincipalValueChanged
+
+    private void listPrincipalMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listPrincipalMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_listPrincipalMouseClicked
+
+    private void listPrincipalFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_listPrincipalFocusGained
+        // TODO add your handling code here:
+    }//GEN-LAST:event_listPrincipalFocusGained
+
+    private void jButtonSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSalvarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButtonSalvarActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1646,13 +1748,48 @@ public class ContatosTelefonicos extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new ContatosTelefonicos().setVisible(true);
+               
                 
             }
         });
     }
+    public void selecionaDados(Connection conn){
+
+    String sql = "SELECT nome "
+                     + "FROM contato;";
+    
+    try {
+            
+            Statement comandoSql = conn.createStatement();
+            
+            ResultSet rs  = comandoSql.executeQuery(sql);
+            DefaultListModel modelo = new DefaultListModel();
+                listPrincipal.setModel(modelo);
+                jList1.setModel(modelo);
+            while(rs.next()){
+                
+                Contato contato = new Contato();
+                
+                //contato.setId(rs.getInt("id"));
+                contato.setNome(rs.getString("nome"));
+                //contato.setNumero(rs.getString("numero"));
+                //contato.setEmail(rs.getString("email"));
+                //contato.setGrupo(rs.getString("grupo"));
+                //contato.add(rs.getString("nome"));
+              
+                
+                modelo.addElement(rs.getString("nome"));
+                
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ContatoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        //return contatos;
+
+    } 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton buttonAdd;
     private javax.swing.JButton buttonAddGrupo;
     private javax.swing.JButton buttonApagarGrupo;
     private javax.swing.JButton buttonCancelar;
@@ -1668,18 +1805,28 @@ public class ContatosTelefonicos extends javax.swing.JFrame {
     private javax.swing.JButton buttonVoltarPrincipal1;
     private javax.swing.JCheckBox checkBoxApagar;
     private javax.swing.JComboBox<String> comboBoxGrupos;
+    private javax.swing.JButton jButtonSalvar;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
+    private javax.swing.JList<String> jList1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JTextField jTextFieldEmail;
+    private javax.swing.JTextField jTextFieldNome;
+    private javax.swing.JTextField jTextFieldTelefone;
     private javax.swing.JLabel labelContatoContato;
     private javax.swing.JLabel labelContatos;
     private javax.swing.JLabel labelContatos1;
